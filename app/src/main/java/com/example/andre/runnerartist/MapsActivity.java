@@ -1,19 +1,15 @@
 package com.example.andre.runnerartist;
 
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.andre.runnerartist.control.RequestMapsPermissionActivity;
 import com.example.andre.runnerartist.model.GeoPoint;
 import com.example.andre.runnerartist.model.Path;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,8 +22,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends RequestMapsPermissionActivity implements OnMapReadyCallback {
 
+    private Button btnPinpoint;
     private Button btnSaveLocation;
 
     private GoogleMap mMap;
@@ -35,8 +32,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private MarkerOptions markerOptions;
     private Path path;
     private Boolean autoSave;
-
-    private final int LOCATION_PERMISSION_REQUEST_ID = 3002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,61 +43,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         autoSave = false;
 
+        btnPinpoint = (Button) findViewById(R.id.btnPinpoint);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
-        btnSaveLocation.setOnClickListener(v -> saveLocation());
+
+        btnPinpoint.setOnClickListener(v -> saveLocation());
+        btnSaveLocation.setOnClickListener(v -> {
+
+        });
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        requestPermissionPosition();
-        Location initialLocation = getCurrentPosition();
-        if (initialLocation == null) {
+        requestMapsPermission(this::initPositionManager, () -> {
             Toast.makeText(this, "A permissão de localização é necessária para o funcionamento", Toast.LENGTH_LONG).show();
             finish();
+        });
+    }
+
+    private void initPositionManager() {
+        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+        Location initialLocation;
+        try {
+            mMap.setMyLocationEnabled(true);
+            initialLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } catch (SecurityException e) {
             return;
         }
-
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
                 .target(new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude()))
-                .zoom(15)
+                .zoom(20)
                 .build()));
 
         location = initialLocation;
-    }
-
-    public void requestPermissionPosition() {
-        if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_ID);
-        }
-    }
-
-    public Location getCurrentPosition() {
-        LocationManager lm = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        try {
-            mMap.setMyLocationEnabled(true);
-            return lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        } catch (SecurityException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_ID: {
-                if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    initPositionManager();
-                }
-                break;
-            }
-        }
-    }
-
-    @RequiresPermission(ACCESS_FINE_LOCATION)
-    private void initPositionManager() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -113,11 +87,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
             @Override
             public void onProviderEnabled(String provider) {
-
             }
             @Override
             public void onProviderDisabled(String provider) {

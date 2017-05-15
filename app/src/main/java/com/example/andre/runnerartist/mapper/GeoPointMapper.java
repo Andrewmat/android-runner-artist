@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import com.example.andre.runnerartist.model.GeoPoint;
 
-public class GeoPointMapper extends PointMapper {
+public class GeoPointMapper extends GenericMapper<GeoPoint> {
     @Override
     public GeoPoint map(Cursor c) {
         return new GeoPoint(

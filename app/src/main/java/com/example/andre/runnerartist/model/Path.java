@@ -4,28 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Path {
-    List<Point> points;
+    List<GeoPoint> points;
 
     public Path() {
         initPath();
     }
-    public Path(List<Point> points) {
+    public Path(List<GeoPoint> points) {
         setPoints(points);
     }
 
     public Double distance() {
         Double sum = 0.0;
         for (int i = 0; i < getPoints().size() - 1; i++) {
-            Point first  = getPoints().get(i),
-                  second = getPoints().get(i + 1);
+            GeoPoint first  = getPoints().get(i),
+                    second = getPoints().get(i + 1);
 
             sum += first.distance(second);
         }
         return sum;
     }
 
-    public Path addPoint(Point p) {
-        List<Point> path = getPoints();
+    public Path addPoint(GeoPoint p) {
+        List<GeoPoint> path = getPoints();
         path.add(p);
         return withPoints(path);
     }
@@ -35,13 +35,13 @@ public class Path {
             setPoints(new ArrayList<>());
         }
     }
-    public List<Point> getPoints() {
+    public List<GeoPoint> getPoints() {
         return points;
     }
-    public void setPoints(List<Point> points) {
+    public void setPoints(List<GeoPoint> points) {
         this.points = points;
     }
-    public Path withPoints(List<Point> points) {
+    public Path withPoints(List<GeoPoint> points) {
         this.points = points;
         return this;
     }
