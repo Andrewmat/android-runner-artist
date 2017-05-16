@@ -28,8 +28,8 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
                 ")");
         db.execSQL("create table t_point(" +
                 "_id integer primary key autoincrement not null," +
-                "xcoord real not null," +
-                "ycoord real not null," +
+                "latitude real not null," +
+                "longitude real not null," +
                 "ind integer not null ," +
                 "drawing_id integer not null," +
                 "foreign key(drawing_id) references t_drawing(_id)" +

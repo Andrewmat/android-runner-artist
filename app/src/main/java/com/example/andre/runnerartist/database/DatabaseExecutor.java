@@ -1,5 +1,6 @@
 package com.example.andre.runnerartist.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,26 +14,22 @@ import com.example.andre.runnerartist.model.GeoPoint;
 import com.example.andre.runnerartist.model.Path;
 import com.example.andre.runnerartist.model.Profile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class DatabaseExecutor {
-    private SQLiteDatabase readableDb;
+    private SQLiteDatabase readableDb, writableDb;
     private Context ctx;
 
     public DatabaseExecutor(Context ctx) {
         this.ctx = ctx;
         readableDb = new SQLiteOpenHelperImpl(ctx).getReadableDatabase();
+        writableDb = new SQLiteOpenHelperImpl(ctx).getWritableDatabase();
     }
 
     /**  ------------- PROFILES ------------- **/
-    private Cursor getCursorProfile(String selection, String[] selectionArgs) {
-        return readableDb.query("t_profile", new String[] {
-                "_id",
-                "name",
-        }, selection, selectionArgs, null, null, null);
-    }
-
-    public Profile getProfileById(Integer id) {
+    public Profile getProfileById(Long id) {
         Cursor c = getCursorProfile("_id = ?", new String[] { id.toString() });
         if (c.moveToFirst()) {
             return new ProfileMapper().map(c);
@@ -46,10 +43,25 @@ public class DatabaseExecutor {
     public List<Profile> getProfiles(String selection, String[] selectionArgs) {
         return new ProfileMapper().mapList(getCursorProfile(selection, selectionArgs));
     }
+    public Profile insertProfile(Profile profile) {
+        Long id = writableDb.insert("t_profile", null, new ProfileMapper().toContentValues(profile, false));
+        return profile.withId(id);
+    }
+    public Integer saveProfile(Profile profile) {
+        return writableDb.update("t_profile",
+                new ProfileMapper().toContentValues(profile),
+                "_id = " + profile.getId(), null);
+    }
+    private Cursor getCursorProfile(String selection, String[] selectionArgs) {
+        return readableDb.query("t_profile", new String[] {
+                "_id",
+                "name",
+        }, selection, selectionArgs, null, null, null);
+    }
     /**  ----------- END PROFILES ----------- **/
 
     /**  ------------- DRAWINGS ------------- **/
-    public Drawing getDrawingById(Integer id) {
+    public Drawing getDrawingById(Long id) {
         Cursor c = getCursorDrawing("_id = ?", new String[] { id.toString() });
         if (c.moveToFirst()) {
             return new DrawingMapper(ctx).map(c);
@@ -57,7 +69,7 @@ public class DatabaseExecutor {
             return null;
         }
     }
-    public List<Drawing> getDrawingsFromProfile(Integer profileId) {
+    public List<Drawing> getDrawingsFromProfile(Long profileId) {
         return getDrawings("profile_id = ?", new String[] { profileId.toString() });
     }
     public List<Drawing> getDrawings() {
@@ -65,6 +77,16 @@ public class DatabaseExecutor {
     }
     private List<Drawing> getDrawings(String selection, String[] selectionArgs) {
         return new DrawingMapper(ctx).mapList(getCursorDrawing(selection, selectionArgs));
+    }
+    public Drawing insertDrawing(Drawing drawing) {
+        Long id = writableDb.insert("t_profile", null, new DrawingMapper().toContentValues(drawing, false));
+        insertPath(drawing.getPath());
+        return drawing.withId(id);
+    }
+    public Integer saveDrawing(Drawing drawing) {
+        return writableDb.update("t_profile",
+                new DrawingMapper().toContentValues(drawing),
+                "_id = " + drawing.getId(), null);
     }
     private Cursor getCursorDrawing(String selection, String[] selectionArgs) {
         return readableDb.query("t_drawing", new String[] {
@@ -79,17 +101,29 @@ public class DatabaseExecutor {
     /**  ----------- END DRAWINGS ----------- **/
 
     /**  -------------- POINTS -------------- **/
-    public Path getPathByDrawing(Integer drawingId) {
+    public Path getPathByDrawing(Long drawingId) {
         return new PathMapper().map(getCursorGeoPointFromDrawing(drawingId));
     }
-    private Cursor getCursorGeoPointFromDrawing(Integer drawingId) {
+    public List<Long> insertPath(Path path) {
+        List<Long> ids = new ArrayList<>(path.getPoints().size());
+        ListIterator<GeoPoint> it = path.getPoints().listIterator();
+        while (it.hasNext()) {
+            Integer index = it.nextIndex();
+            GeoPoint geoPoint = it.next();
+            ContentValues cval = new GeoPointMapper().toContentValues(geoPoint, false);
+            cval.put("ind", index);
+            ids.add(writableDb.insert("t_point", null, cval));
+        }
+        return ids;
+    }
+    private Cursor getCursorGeoPointFromDrawing(Long drawingId) {
         return getCursorGeoPoint("drawing_id = ?", new String[] { drawingId.toString() });
     }
     private Cursor getCursorGeoPoint(String selection, String[] selectionArgs) {
         return readableDb.query("t_point", new String[] {
                 "_id",
-                "xcoord",
-                "ycoord",
+                "latitude",
+                "longitude",
                 "drawing_id"
         }, selection, selectionArgs, null, "ind ASC", null);
     }

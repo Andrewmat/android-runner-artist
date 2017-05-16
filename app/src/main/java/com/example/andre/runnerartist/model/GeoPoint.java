@@ -3,7 +3,9 @@ package com.example.andre.runnerartist.model;
 import android.location.Location;
 
 public class GeoPoint {
+    private Long id;
     private Double lat, lng;
+    private Drawing drawing;
     public GeoPoint(Double lat, Double lng) {
         setLat(lat);
         setLng(lng);
@@ -27,17 +29,33 @@ public class GeoPoint {
         return distance(this, p);
     }
 
+    public Long getId() {
+        return id;
+    }
     public Double getLat() {
         return lat;
     }
     public Double getLng() {
         return lng;
     }
+    public Drawing getDrawing() {
+        return drawing;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
     public void setLat(Double lat) {
         this.lat = lat;
     }
     public void setLng(Double lng) {
         this.lng = lng;
+    }
+    public void setDrawing(Drawing drawing) {
+        this.drawing = drawing;
+    }
+    public GeoPoint withId(Long id) {
+        setId(id);
+        return this;
     }
     public GeoPoint withLat(Double lat) {
         setLat(lat);
@@ -47,4 +65,9 @@ public class GeoPoint {
         setLat(lng);
         return this;
     }
+    public GeoPoint withDrawing(Drawing drawing) {
+        setDrawing(drawing);
+        return this;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.andre.runnerartist.model;
 
-public class Drawing {
+public class Drawing implements Cloneable {
+    private Long id;
     private Path path;
     private Profile profile;
     private Long startCreationTime;
@@ -8,6 +9,9 @@ public class Drawing {
     private String description;
     private Boolean cycle;
 
+    public Long getId() {
+        return id;
+    }
     public Path getPath() {
         return path;
     }
@@ -25,6 +29,9 @@ public class Drawing {
     }
     public Boolean getCycle() {
         return cycle;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
     public void setPath(Path path) {
         this.path = path;
@@ -44,28 +51,32 @@ public class Drawing {
     public void setCycle(Boolean cycle) {
         this.cycle = cycle;
     }
+    public Drawing withId(Long id) {
+        setId(id);
+        return this;
+    }
     public Drawing withPath(Path path) {
-        this.path = path;
+        setPath(path);
         return this;
     }
     public Drawing withProfile(Profile profile) {
-        this.profile = profile;
+        setProfile(profile);
         return this;
     }
     public Drawing withStartCreationTime(Long startCreationTime) {
-        this.startCreationTime = startCreationTime;
+        setStartCreationTime(startCreationTime);
         return this;
     }
     public Drawing withFinishCreationTime(Long finishCreationTime) {
-        this.finishCreationTime = finishCreationTime;
+        setFinishCreationTime(finishCreationTime);
         return this;
     }
     public Drawing withDescription(String description) {
-        this.description = description;
+        setDescription(description);
         return this;
     }
     public Drawing withCycle(Boolean cycle) {
-        this.cycle = cycle;
+        setCycle(cycle);
         return this;
     }
 }

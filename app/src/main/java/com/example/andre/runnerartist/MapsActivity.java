@@ -1,5 +1,6 @@
 package com.example.andre.runnerartist;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.andre.runnerartist.control.RequestMapsPermissionActivity;
+import com.example.andre.runnerartist.database.DatabaseExecutor;
+import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.GeoPoint;
 import com.example.andre.runnerartist.model.Path;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,7 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -29,9 +32,18 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
 
     private GoogleMap mMap;
     private Location location;
-    private MarkerOptions markerOptions;
-    private Path path;
+    private PolylineOptions polylineOptions;
+
+    private Drawing drawing;
     private Boolean autoSave;
+
+    private DatabaseExecutor dbExecutor;
+    protected DatabaseExecutor db() {
+        if (dbExecutor == null) {
+            dbExecutor = new DatabaseExecutor(this);
+        }
+        return dbExecutor;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +53,32 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        autoSave = false;
+        Intent in = getIntent();
+        autoSave = in.getBooleanExtra("autosave", true);
+        Long profileId = in.getLongExtra("profileId", 0);
 
         btnPinpoint = (Button) findViewById(R.id.btnPinpoint);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
 
-        btnPinpoint.setOnClickListener(v -> saveLocation());
-        btnSaveLocation.setOnClickListener(v -> {
-
+        btnPinpoint.setOnClickListener(v -> {
+            saveLocation();
         });
+        btnSaveLocation.setOnClickListener(v -> {
+            db().insertDrawing(drawing);
+            finish();
+        });
+        drawing = new Drawing()
+                .withPath(new Path())
+                .withProfile(db().getProfileById(profileId))
+                .withCycle(false)
+                .withStartCreationTime(System.currentTimeMillis());
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        polylineOptions = new PolylineOptions();
+        mMap.addPolyline(polylineOptions);
 
         requestMapsPermission(this::initPositionManager, () -> {
             Toast.makeText(this, "A permissão de localização é necessária para o funcionamento", Toast.LENGTH_LONG).show();
@@ -102,20 +126,13 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         this.location = currLocation;
         LatLng latLng = new LatLng(currLocation.getLatitude(), currLocation.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        if (markerOptions == null) {
-            markerOptions = new MarkerOptions()
-                    .title("Here");
-        }
-        markerOptions.position(latLng);
         if (autoSave) {
             saveLocation();
         }
     }
 
     public void saveLocation() {
-        if (path == null) {
-            path = new Path();
-        }
-        path.addPoint(new GeoPoint(location));
+        drawing.getPath().addPoint(new GeoPoint(location));
+        polylineOptions.add(new LatLng(location.getLatitude(), location.getLongitude()));
     }
 }

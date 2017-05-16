@@ -42,7 +42,7 @@ public class Path {
         this.points = points;
     }
     public Path withPoints(List<GeoPoint> points) {
-        this.points = points;
+        setPoints(points);
         return this;
     }
 }
