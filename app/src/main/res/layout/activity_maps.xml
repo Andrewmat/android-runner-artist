@@ -16,17 +16,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="10">
-        <Button
-            android:id="@+id/btnPinpoint"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Adicionar ponto" />
+        android:layout_weight="10"
+        android:orientation="horizontal">
+
         <Button
             android:id="@+id/btnSaveLocation"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Salvar e sair" />
+            android:text="Salvar e sair"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnPinpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Adicionar ponto" />
     </LinearLayout>
 
 </LinearLayout>

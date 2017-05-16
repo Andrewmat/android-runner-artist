@@ -79,9 +79,13 @@ public class DatabaseExecutor {
         return new DrawingMapper(ctx).mapList(getCursorDrawing(selection, selectionArgs));
     }
     public Drawing insertDrawing(Drawing drawing) {
-        Long id = writableDb.insert("t_profile", null, new DrawingMapper().toContentValues(drawing, false));
+        Long id = writableDb.insert("t_drawing", null, new DrawingMapper().toContentValues(drawing, false));
+        drawing.setId(id);
+        for (GeoPoint p : drawing.getPath().getPoints()) {
+            p.setDrawing(drawing);
+        }
         insertPath(drawing.getPath());
-        return drawing.withId(id);
+        return drawing;
     }
     public Integer saveDrawing(Drawing drawing) {
         return writableDb.update("t_profile",
@@ -125,7 +129,7 @@ public class DatabaseExecutor {
                 "latitude",
                 "longitude",
                 "drawing_id"
-        }, selection, selectionArgs, null, "ind ASC", null);
+        }, selection, selectionArgs, null, null, "ind ASC");
     }
     /**  ------------ END POINTS ------------ **/
 }

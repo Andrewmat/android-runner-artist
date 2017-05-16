@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public class MainActivity extends GenericActivity {
                 Boolean found = false;
                 for (Profile p : profiles) {
                     if (p.getId() == item.getItemId()) {
-                        profile = p;
+                        updateProfile(p);
                         found = true;
                         break;
                     }
@@ -65,7 +66,7 @@ public class MainActivity extends GenericActivity {
         fabBeginDraw.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, MapsActivity.class);
             intent.putExtra("autosave", swtContinuo.isChecked());
-            intent.putExtra("profileId", 0L);
+            intent.putExtra("profileId", profile.getId());
             startActivity(intent);
         });
     }
@@ -75,7 +76,8 @@ public class MainActivity extends GenericActivity {
         if (requestCode == 1001 && resultCode == RESULT_OK) {
             Profile newProfile = new Profile()
                     .withName(data.getStringExtra("profileName"));
-            profile = db().insertProfile(newProfile);
+            updateProfile(db().insertProfile(newProfile));
+
         }
     }
 
@@ -94,5 +96,10 @@ public class MainActivity extends GenericActivity {
             intent.putExtra("drawing_id", id);
             startActivity(intent);
         });
+    }
+
+    private void updateProfile(Profile p) {
+        profile = p;
+        btnListProfile.setText(p.getName());
     }
 }

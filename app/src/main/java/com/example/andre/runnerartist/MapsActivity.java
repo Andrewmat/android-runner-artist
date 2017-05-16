@@ -64,7 +64,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
             saveLocation();
         });
         btnSaveLocation.setOnClickListener(v -> {
-            db().insertDrawing(drawing);
+            db().insertDrawing(drawing.withFinishCreationTime(System.currentTimeMillis()));
             finish();
         });
         drawing = new Drawing()
