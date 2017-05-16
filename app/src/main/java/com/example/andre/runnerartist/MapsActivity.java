@@ -36,6 +36,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
 
     private Drawing drawing;
     private Boolean autoSave;
+    private Boolean isShowing;
 
     private DatabaseExecutor dbExecutor;
     protected DatabaseExecutor db() {
@@ -53,10 +54,6 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Intent in = getIntent();
-        autoSave = in.getBooleanExtra("autosave", true);
-        Long profileId = in.getLongExtra("profileId", 0);
-
         btnPinpoint = (Button) findViewById(R.id.btnPinpoint);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
 
@@ -67,17 +64,31 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
             db().insertDrawing(drawing.withFinishCreationTime(System.currentTimeMillis()));
             finish();
         });
-        drawing = new Drawing()
-                .withPath(new Path())
-                .withProfile(db().getProfileById(profileId))
-                .withCycle(false)
-                .withStartCreationTime(System.currentTimeMillis());
+        Intent in = getIntent();
+        if (in.getLongExtra("drawingId", -1) != -1L) {
+            drawing = db().getDrawingById(in.getLongExtra("drawingId", -1));
+            isShowing = true;
+        } else {
+            autoSave = in.getBooleanExtra("autosave", true);
+            Long profileId = in.getLongExtra("profileId", 0);
+            drawing = new Drawing()
+                    .withPath(new Path())
+                    .withProfile(db().getProfileById(profileId))
+                    .withCycle(false)
+                    .withStartCreationTime(System.currentTimeMillis());
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        polylineOptions = new PolylineOptions();
+        if (isShowing) {
+            for (GeoPoint p : drawing.getPath().getPoints()) {
+                polylineOptions.add(new LatLng(p.getLat(), p.getLng()));
+            }
+        } else {
+            polylineOptions = new PolylineOptions();
+        }
         mMap.addPolyline(polylineOptions);
 
         requestMapsPermission(this::initPositionManager, () -> {
@@ -104,7 +115,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 30, new LocationListener() {
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 locationChange(location);

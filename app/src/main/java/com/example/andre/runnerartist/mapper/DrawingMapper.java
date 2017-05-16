@@ -17,6 +17,7 @@ public class DrawingMapper extends GenericMapper<Drawing> {
     public Drawing map(Cursor c) {
         try {
             return new Drawing()
+                    .withId(c.getLong(c.getColumnIndex("_id")))
                     .withDescription(c.getString(c.getColumnIndex("description")))
                     .withCycle(c.getInt(c.getColumnIndex("cycle")) == 1)
                     .withStartCreationTime(c.getLong(c.getColumnIndex("start")))

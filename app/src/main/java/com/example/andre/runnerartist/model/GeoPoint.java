@@ -5,7 +5,7 @@ import android.location.Location;
 public class GeoPoint {
     private Long id;
     private Double lat, lng;
-    private Drawing drawing;
+    private Long drawingId;
     public GeoPoint(Double lat, Double lng) {
         setLat(lat);
         setLng(lng);
@@ -38,8 +38,8 @@ public class GeoPoint {
     public Double getLng() {
         return lng;
     }
-    public Drawing getDrawing() {
-        return drawing;
+    public Long getDrawingId() {
+        return drawingId;
     }
     public void setId(Long id) {
         this.id = id;
@@ -50,8 +50,8 @@ public class GeoPoint {
     public void setLng(Double lng) {
         this.lng = lng;
     }
-    public void setDrawing(Drawing drawing) {
-        this.drawing = drawing;
+    public void setDrawingId(Long drawingId) {
+        this.drawingId = drawingId;
     }
     public GeoPoint withId(Long id) {
         setId(id);
@@ -65,8 +65,8 @@ public class GeoPoint {
         setLat(lng);
         return this;
     }
-    public GeoPoint withDrawing(Drawing drawing) {
-        setDrawing(drawing);
+    public GeoPoint withDrawingId(Long drawingId) {
+        setDrawingId(drawingId);
         return this;
     }
 

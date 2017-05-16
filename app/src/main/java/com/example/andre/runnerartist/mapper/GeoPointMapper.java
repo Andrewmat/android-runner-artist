@@ -1,11 +1,15 @@
 package com.example.andre.runnerartist.mapper;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.example.andre.runnerartist.model.GeoPoint;
 
 public class GeoPointMapper extends GenericMapper<GeoPoint> {
+    public GeoPointMapper() {
+        super();
+    }
     @Override
     public GeoPoint map(Cursor c) {
         try {
@@ -13,7 +17,7 @@ public class GeoPointMapper extends GenericMapper<GeoPoint> {
                     c.getDouble(c.getColumnIndex("latitude")),
                     c.getDouble(c.getColumnIndex("longitude")))
                     .withId(c.getLong(c.getColumnIndex("_id")))
-                    .withDrawing(db().getDrawingById(c.getLong(c.getColumnIndex("drawing_id"))));
+                    .withDrawingId(c.getLong(c.getColumnIndex("drawing_id")));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -28,7 +32,7 @@ public class GeoPointMapper extends GenericMapper<GeoPoint> {
         }
         cval.put("latitude", geoPoint.getLat());
         cval.put("longitude", geoPoint.getLng());
-        cval.put("drawing_id", geoPoint.getDrawing().getId());
+        cval.put("drawing_id", geoPoint.getDrawingId());
         return cval;
     }
 }

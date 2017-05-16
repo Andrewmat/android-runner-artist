@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -93,7 +92,7 @@ public class MainActivity extends GenericActivity {
         lstView.setAdapter(adapter);
         lstView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(ctx, MapsActivity.class);
-            intent.putExtra("drawing_id", id);
+            intent.putExtra("drawingId", id);
             startActivity(intent);
         });
     }

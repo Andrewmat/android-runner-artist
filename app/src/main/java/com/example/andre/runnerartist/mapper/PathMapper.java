@@ -1,13 +1,16 @@
 package com.example.andre.runnerartist.mapper;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.example.andre.runnerartist.model.Path;
 
 public class PathMapper extends GenericMapper<Path> {
-    public PathMapper() {
-        super();
+    private Context ctx;
+    public PathMapper(Context ctx) {
+        super(ctx);
+        this.ctx = ctx;
     }
     @Override
     public Path map(Cursor c) {

@@ -80,9 +80,8 @@ public class DatabaseExecutor {
     }
     public Drawing insertDrawing(Drawing drawing) {
         Long id = writableDb.insert("t_drawing", null, new DrawingMapper().toContentValues(drawing, false));
-        drawing.setId(id);
         for (GeoPoint p : drawing.getPath().getPoints()) {
-            p.setDrawing(drawing);
+            p.setDrawingId(id);
         }
         insertPath(drawing.getPath());
         return drawing;
@@ -106,7 +105,7 @@ public class DatabaseExecutor {
 
     /**  -------------- POINTS -------------- **/
     public Path getPathByDrawing(Long drawingId) {
-        return new PathMapper().map(getCursorGeoPointFromDrawing(drawingId));
+        return new PathMapper(ctx).map(getCursorGeoPointFromDrawing(drawingId));
     }
     public List<Long> insertPath(Path path) {
         List<Long> ids = new ArrayList<>(path.getPoints().size());
