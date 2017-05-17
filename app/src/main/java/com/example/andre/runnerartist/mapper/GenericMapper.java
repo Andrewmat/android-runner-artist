@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GenericMapper<T> implements Mapper<T> {
-    private Context ctx;
+    private final Context ctx;
     private DatabaseExecutor dbExecutor;
-    protected GenericMapper(Context ctx) {
+    GenericMapper(Context ctx) {
         this.ctx = ctx;
     }
-    protected GenericMapper() {
+    GenericMapper() {
         ctx = null;
     }
-    protected DatabaseExecutor db() throws Exception {
+    DatabaseExecutor db() throws Exception {
         if (dbExecutor == null) {
             if (ctx == null) {
                 throw new Exception("Mapper not able to execute queries");

@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends GenericActivity {
-    final Context ctx = this;
-    ListView lstDrawings;
-    Switch swtContinuo;
-    Button btnListProfile;
-    FloatingActionButton fabBeginDraw;
-    Profile profile;
+    private final Context ctx = this;
+    private ListView lstDrawings;
+    private Switch swtContinuo;
+    private Button btnListProfile;
+    private FloatingActionButton fabBeginDraw;
+    private Profile profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class DatabaseExecutor {
-    private SQLiteDatabase readableDb, writableDb;
-    private Context ctx;
+    private final SQLiteDatabase readableDb, writableDb;
+    private final Context ctx;
 
     public DatabaseExecutor(Context ctx) {
         this.ctx = ctx;

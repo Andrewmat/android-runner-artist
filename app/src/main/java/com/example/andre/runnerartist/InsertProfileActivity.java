@@ -8,8 +8,8 @@ import android.widget.EditText;
 
 public class InsertProfileActivity extends AppCompatActivity {
 
-    EditText edvInsertName;
-    Button btnInsertProfile;
+    private EditText edvInsertName;
+    private Button btnInsertProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

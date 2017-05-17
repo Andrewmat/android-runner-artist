@@ -4,11 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
+class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
     public static final String DB_NAME = "RUNNER_ARTIST_MAIN";
     public static final Integer DB_VERSION = 1;
 
-    public SQLiteOpenHelperImpl(Context ctx) {
+    SQLiteOpenHelperImpl(Context ctx) {
         super(ctx, DB_NAME, null, DB_VERSION);
     }
 

@@ -9,9 +9,6 @@ public class Path {
     public Path() {
         initPath();
     }
-    public Path(List<GeoPoint> points) {
-        setPoints(points);
-    }
 
     public Double distance() {
         Double sum = 0.0;

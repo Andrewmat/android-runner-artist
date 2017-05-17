@@ -5,7 +5,7 @@ import android.database.Cursor;
 
 import java.util.List;
 
-public interface Mapper<T> {
+interface Mapper<T> {
     T map(Cursor c);
     List<T> mapList(Cursor c);
     ContentValues toContentValues(T t, Boolean withId);

@@ -13,7 +13,7 @@ public abstract class RequestMapsPermissionActivity extends FragmentActivity {
     private final int LOCATION_PERMISSION_REQUEST_ID = 3002;
     private Runnable whenGranted, whenDenied;
 
-    public void requestMapsPermission(Runnable inGrantedPermission, Runnable inDeniedPermission) {
+    protected void requestMapsPermission(Runnable inGrantedPermission, Runnable inDeniedPermission) {
         whenGranted = inGrantedPermission;
         whenDenied = inDeniedPermission;
         if (ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

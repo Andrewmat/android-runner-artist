@@ -7,10 +7,8 @@ import android.database.Cursor;
 import com.example.andre.runnerartist.model.Path;
 
 public class PathMapper extends GenericMapper<Path> {
-    private Context ctx;
     public PathMapper(Context ctx) {
         super(ctx);
-        this.ctx = ctx;
     }
     @Override
     public Path map(Cursor c) {

@@ -24,14 +24,16 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Salvar e sair"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"/>
 
         <Button
             android:id="@+id/btnPinpoint"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Adicionar ponto" />
+            android:text="Adicionar ponto"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
 </LinearLayout>

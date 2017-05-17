@@ -39,7 +39,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
     private Boolean isShowing;
 
     private DatabaseExecutor dbExecutor;
-    protected DatabaseExecutor db() {
+    private DatabaseExecutor db() {
         if (dbExecutor == null) {
             dbExecutor = new DatabaseExecutor(this);
         }
@@ -133,7 +133,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         });
     }
 
-    public void locationChange(Location currLocation) {
+    private void locationChange(Location currLocation) {
         this.location = currLocation;
         LatLng latLng = new LatLng(currLocation.getLatitude(), currLocation.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -142,7 +142,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         }
     }
 
-    public void saveLocation() {
+    private void saveLocation() {
         drawing.getPath().addPoint(new GeoPoint(location));
         polylineOptions.add(new LatLng(location.getLatitude(), location.getLongitude()));
     }

@@ -1,7 +1,6 @@
 package com.example.andre.runnerartist.mapper;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 
 import com.example.andre.runnerartist.model.GeoPoint;
