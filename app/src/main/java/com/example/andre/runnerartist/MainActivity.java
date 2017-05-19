@@ -12,6 +12,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 
+import com.example.andre.runnerartist.control.DrawingItemAdapter;
 import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.Profile;
 
@@ -68,6 +69,8 @@ public class MainActivity extends GenericActivity {
             intent.putExtra("profileId", profile.getId());
             startActivity(intent);
         });
+
+        updateProfile(db().getProfiles().get(0));
     }
 
     @Override
@@ -82,13 +85,7 @@ public class MainActivity extends GenericActivity {
 
     private void setLstDrawings(ListView lstView) {
         List<Drawing> drawings = db().getDrawings();
-        List<Long> creationTime = new ArrayList<>(drawings.size());
-        for (Drawing drawing : drawings) {
-            creationTime.add(drawing.getFinishCreationTime());
-        }
-        ListAdapter adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1,
-                creationTime);
+        ListAdapter adapter = new DrawingItemAdapter(this, drawings);
         lstView.setAdapter(adapter);
         lstView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(ctx, MapsActivity.class);

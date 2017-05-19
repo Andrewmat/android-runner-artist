@@ -2,11 +2,13 @@ package com.example.andre.runnerartist;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -57,9 +59,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         btnPinpoint = (Button) findViewById(R.id.btnPinpoint);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
 
-        btnPinpoint.setOnClickListener(v -> {
-            saveLocation();
-        });
+        btnPinpoint.setOnClickListener(v -> saveLocation());
         btnSaveLocation.setOnClickListener(v -> {
             db().insertDrawing(drawing.withFinishCreationTime(System.currentTimeMillis()));
             finish();
@@ -68,7 +68,10 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         if (in.getLongExtra("drawingId", -1) != -1L) {
             drawing = db().getDrawingById(in.getLongExtra("drawingId", -1));
             isShowing = true;
+            btnPinpoint.setVisibility(View.INVISIBLE);
+            btnSaveLocation.setVisibility(View.INVISIBLE);
         } else {
+            isShowing = false;
             autoSave = in.getBooleanExtra("autosave", true);
             Long profileId = in.getLongExtra("profileId", 0);
             drawing = new Drawing()
@@ -82,39 +85,38 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        polylineOptions = new PolylineOptions()
+                .width(8)
+                .color(Color.BLUE);
         if (isShowing) {
             for (GeoPoint p : drawing.getPath().getPoints()) {
                 polylineOptions.add(new LatLng(p.getLat(), p.getLng()));
             }
+            GeoPoint pos = drawing.getPath().getPoints().get(0);
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                    .target(new LatLng(pos.getLat(), pos.getLng()))
+                    .zoom(20)
+                    .build()));
         } else {
-            polylineOptions = new PolylineOptions();
+            requestMapsPermission(this::initPositionManager, () -> {
+                Toast.makeText(this, "A permissão de localização é necessária para o funcionamento", Toast.LENGTH_LONG).show();
+                finish();
+            });
         }
         mMap.addPolyline(polylineOptions);
-
-        requestMapsPermission(this::initPositionManager, () -> {
-            Toast.makeText(this, "A permissão de localização é necessária para o funcionamento", Toast.LENGTH_LONG).show();
-            finish();
-        });
     }
 
     private void initPositionManager() {
         LocationManager lm = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
-        Location initialLocation;
-        try {
-            mMap.setMyLocationEnabled(true);
-            initialLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        } catch (SecurityException e) {
-            return;
-        }
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                .target(new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude()))
-                .zoom(20)
-                .build()));
-
-        location = initialLocation;
         if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            finish();
             return;
         }
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            finish();
+            return;
+        }
+
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 5, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -131,6 +133,24 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
                 finish();
             }
         });
+
+        Location initialLocation;
+        try {
+            mMap.setMyLocationEnabled(true);
+            initialLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (initialLocation == null) {
+                throw new SecurityException("Null return on last know location request");
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            return;
+        }
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                .target(new LatLng(initialLocation.getLatitude(), initialLocation.getLongitude()))
+                .zoom(20)
+                .build()));
+
+        location = initialLocation;
     }
 
     private void locationChange(Location currLocation) {
