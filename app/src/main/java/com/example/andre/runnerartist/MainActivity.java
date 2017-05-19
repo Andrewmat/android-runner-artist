@@ -37,8 +37,6 @@ public class MainActivity extends GenericActivity {
         swtContinuo = (Switch) findViewById(R.id.swtContinuo);
         fabBeginDraw = (FloatingActionButton) findViewById(R.id.fabBeginDraw);
 
-        setLstDrawings(lstDrawings);
-
         btnListProfile.setOnClickListener(v -> {
             List<Profile> profiles = db().getProfiles();
             PopupMenu pp = new PopupMenu(ctx, v);
@@ -79,12 +77,17 @@ public class MainActivity extends GenericActivity {
             Profile newProfile = new Profile()
                     .withName(data.getStringExtra("profileName"));
             updateProfile(db().insertProfile(newProfile));
-
         }
     }
 
+    private void updateProfile(Profile p) {
+        profile = p;
+        btnListProfile.setText(p.getName());
+        setLstDrawings(lstDrawings);
+    }
+
     private void setLstDrawings(ListView lstView) {
-        List<Drawing> drawings = db().getDrawings();
+        List<Drawing> drawings = db().getDrawingsFromProfile(profile.getId());
         ListAdapter adapter = new DrawingItemAdapter(this, drawings);
         lstView.setAdapter(adapter);
         lstView.setOnItemClickListener((parent, view, position, id) -> {
@@ -92,10 +95,5 @@ public class MainActivity extends GenericActivity {
             intent.putExtra("drawingId", id);
             startActivity(intent);
         });
-    }
-
-    private void updateProfile(Profile p) {
-        profile = p;
-        btnListProfile.setText(p.getName());
     }
 }
