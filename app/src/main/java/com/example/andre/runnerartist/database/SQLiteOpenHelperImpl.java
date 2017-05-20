@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
     public static final String DB_NAME = "RUNNER_ARTIST_MAIN";
-    public static final Integer DB_VERSION = 1;
+    public static final Integer DB_VERSION = 2;
 
     SQLiteOpenHelperImpl(Context ctx) {
         super(ctx, DB_NAME, null, DB_VERSION);
@@ -38,6 +38,11 @@ class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            db.execSQL("create table t_userconfig(" +
+                    "name text primary key not null," +
+                    "value text not null" +
+                    ")");
+        }
     }
 }

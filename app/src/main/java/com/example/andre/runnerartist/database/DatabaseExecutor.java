@@ -40,17 +40,12 @@ public class DatabaseExecutor {
     public List<Profile> getProfiles() {
         return getProfiles(null, null);
     }
-    public List<Profile> getProfiles(String selection, String[] selectionArgs) {
+    private List<Profile> getProfiles(String selection, String[] selectionArgs) {
         return new ProfileMapper().mapList(getCursorProfile(selection, selectionArgs));
     }
     public Profile insertProfile(Profile profile) {
         Long id = writableDb.insert("t_profile", null, new ProfileMapper().toContentValues(profile, false));
         return profile.withId(id);
-    }
-    public Integer saveProfile(Profile profile) {
-        return writableDb.update("t_profile",
-                new ProfileMapper().toContentValues(profile),
-                "_id = " + profile.getId(), null);
     }
     private Cursor getCursorProfile(String selection, String[] selectionArgs) {
         return readableDb.query("t_profile", new String[] {
@@ -72,9 +67,6 @@ public class DatabaseExecutor {
     public List<Drawing> getDrawingsFromProfile(Long profileId) {
         return getDrawings("profile_id = ?", new String[] { profileId.toString() });
     }
-    public List<Drawing> getDrawings() {
-        return getDrawings(null, null);
-    }
     private List<Drawing> getDrawings(String selection, String[] selectionArgs) {
         return new DrawingMapper(ctx).mapList(getCursorDrawing(selection, selectionArgs));
     }
@@ -85,11 +77,6 @@ public class DatabaseExecutor {
         }
         insertPath(drawing.getPath());
         return drawing;
-    }
-    public Integer saveDrawing(Drawing drawing) {
-        return writableDb.update("t_profile",
-                new DrawingMapper().toContentValues(drawing),
-                "_id = " + drawing.getId(), null);
     }
     private Cursor getCursorDrawing(String selection, String[] selectionArgs) {
         return readableDb.query("t_drawing", new String[] {
@@ -131,4 +118,29 @@ public class DatabaseExecutor {
         }, selection, selectionArgs, null, null, "ind ASC");
     }
     /**  ------------ END POINTS ------------ **/
+
+    /**  ------------- CONFIGS --------------  **/
+    public String getUserConfig(String name) {
+        Cursor c = readableDb.query("t_userconfig",
+                new String[] { "name", "value" },
+                "name = ?",
+                new String[] { name },
+                null, null, null);
+        if (c.moveToFirst()) {
+            return c.getString(c.getColumnIndex("value"));
+        } else {
+            return null;
+        }
+    }
+    public void setUserConfig(String name, String value) {
+        ContentValues cval = new ContentValues();
+        cval.put("name", name);
+        cval.put("value", value);
+        if (getUserConfig(name) == null) {
+            writableDb.insert("t_userconfig", null, cval);
+        } else {
+            writableDb.update("t_userconfig", cval, "name = ?", new String[] { name });
+        }
+    }
+    /**  ----------- END CONFIGS ------------  **/
 }
