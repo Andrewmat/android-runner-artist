@@ -1,6 +1,5 @@
 package com.example.andre.runnerartist.mapper;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -36,8 +35,5 @@ public abstract class GenericMapper<T> implements Mapper<T> {
             } while (c.moveToNext());
         }
         return lst;
-    }
-    public ContentValues toContentValues(T t) {
-        return toContentValues(t, true);
     }
 }

@@ -75,11 +75,14 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
             isShowing = false;
             autoSave = in.getBooleanExtra("autosave", true);
             Long profileId = in.getLongExtra("profileId", 0);
-            drawing = new Drawing()
+            db().getProfileById(profileId, p -> {
+                drawing = new Drawing()
                     .withPath(new Path())
-                    .withProfile(db().getProfileById(profileId))
+                    .withProfile(p)
                     .withCycle(false)
                     .withStartCreationTime(System.currentTimeMillis());
+                return null;
+            });
         }
     }
 

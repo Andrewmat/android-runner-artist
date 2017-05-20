@@ -1,8 +1,9 @@
 package com.example.andre.runnerartist.model;
 
+import android.content.ContentValues;
 import android.location.Location;
 
-public class GeoPoint {
+public class GeoPoint implements ContentValueAble {
     private Long id;
     private Double lat, lng;
     private Long drawingId;
@@ -70,4 +71,18 @@ public class GeoPoint {
         return this;
     }
 
+    @Override
+    public ContentValues asContentValues() {
+        return asContentValues(null);
+    }
+    public ContentValues asContentValues(Integer index) {
+        ContentValues cval = new ContentValues();
+        cval.put("latitude", getLat());
+        cval.put("longitude", getLng());
+        if (index != null) {
+            cval.put("ind", index);
+        }
+        cval.put("drawing_id", getDrawingId());
+        return cval;
+    }
 }

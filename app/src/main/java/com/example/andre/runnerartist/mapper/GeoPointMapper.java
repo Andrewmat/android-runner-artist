@@ -1,6 +1,5 @@
 package com.example.andre.runnerartist.mapper;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.example.andre.runnerartist.model.GeoPoint;
@@ -21,17 +20,5 @@ public class GeoPointMapper extends GenericMapper<GeoPoint> {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public ContentValues toContentValues(GeoPoint geoPoint, Boolean withId) {
-        ContentValues cval = new ContentValues();
-        if (withId) {
-            cval.put("_id", geoPoint.getId());
-        }
-        cval.put("latitude", geoPoint.getLat());
-        cval.put("longitude", geoPoint.getLng());
-        cval.put("drawing_id", geoPoint.getDrawingId());
-        return cval;
     }
 }

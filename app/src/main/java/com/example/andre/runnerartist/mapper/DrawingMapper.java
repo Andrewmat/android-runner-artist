@@ -1,6 +1,5 @@
 package com.example.andre.runnerartist.mapper;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -28,19 +27,5 @@ public class DrawingMapper extends GenericMapper<Drawing> {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public ContentValues toContentValues(Drawing drawing, Boolean withId) {
-        ContentValues cval = new ContentValues();
-        if (withId) {
-            cval.put("_id", drawing.getId());
-        }
-        cval.put("description", drawing.getDescription());
-        cval.put("cycle", drawing.getCycle());
-        cval.put("start", drawing.getStartCreationTime());
-        cval.put("finish", drawing.getFinishCreationTime());
-        cval.put("profile_id", drawing.getProfile().getId());
-        return cval;
     }
 }

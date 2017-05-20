@@ -1,6 +1,8 @@
 package com.example.andre.runnerartist.model;
 
-public class Drawing implements Cloneable {
+import android.content.ContentValues;
+
+public class Drawing implements Cloneable, ContentValueAble {
     private Long id;
     private Path path;
     private Profile profile;
@@ -78,5 +80,16 @@ public class Drawing implements Cloneable {
     public Drawing withCycle(Boolean cycle) {
         setCycle(cycle);
         return this;
+    }
+
+    @Override
+    public ContentValues asContentValues() {
+        ContentValues cval = new ContentValues();
+        cval.put("description", getDescription());
+        cval.put("cycle", getCycle());
+        cval.put("start", getStartCreationTime());
+        cval.put("finish", getFinishCreationTime());
+        cval.put("profile_id", getProfile().getId());
+        return cval;
     }
 }

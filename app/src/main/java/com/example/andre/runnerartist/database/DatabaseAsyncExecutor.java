@@ -3,6 +3,7 @@ package com.example.andre.runnerartist.database;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.andre.runnerartist.misc.ConfigConstant;
 import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.Path;
 import com.example.andre.runnerartist.model.Profile;
@@ -17,95 +18,94 @@ public class DatabaseAsyncExecutor extends DatabaseExecutor {
 
     /**  ------------- PROFILES --------------  **/
     public void getProfiles(Function<List<Profile>, Void> callback) {
-        new AsyncTaskImpl<List<Profile>>() {
-            @Override
-            protected List<Profile> doInBackground(Void... params) {
-                return getProfiles();
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<List<Profile>>()
+                .task(v -> getProfiles())
+                .callback(callback)
+                .execute();
+    }
+    public void getProfileById(Long id, Function<Profile, Void> callback) {
+        new AsyncTaskImpl<Profile>()
+                .task(v -> getProfileById(id))
+                .callback(callback)
+                .execute();
     }
     public void insertProfile(Profile profile, Function<Profile, Void> callback) {
-        new AsyncTaskImpl<Profile>() {
-            @Override
-            protected Profile doInBackground(Void... params) {
-                return insertProfile(profile);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<Profile>()
+                .task(v -> insertProfile(profile))
+                .callback(callback)
+                .execute();
     }
     /**  ----------- END PROFILES ------------  **/
 
     /**  ------------- DRAWINGS --------------  **/
     public void getDrawingById(Long id, Function<Drawing, Void> callback) {
-        new AsyncTaskImpl<Drawing>() {
-            @Override
-            protected Drawing doInBackground(Void... params) {
-                return getDrawingById(id);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<Drawing>()
+                .task(v -> getDrawingById(id))
+                .callback(callback)
+                .execute();
     }
     public void getDrawingsFromProfile(Long profileId, Function<List<Drawing>, Void> callback) {
-        new AsyncTaskImpl<List<Drawing>>() {
-            @Override
-            protected List<Drawing> doInBackground(Void... params) {
-                return getDrawingsFromProfile(profileId);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<List<Drawing>>()
+                .task(v -> getDrawingsFromProfile(profileId))
+                .callback(callback)
+                .execute();
     }
     public void insertDrawing(Drawing drawing, Function<Drawing, Void> callback) {
-        new AsyncTaskImpl<Drawing>() {
-            @Override
-            protected Drawing doInBackground(Void... params) {
-                return insertDrawing(drawing);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<Drawing>()
+                .task(v -> insertDrawing(drawing))
+                .callback(callback)
+                .execute();
     }
     /**  ----------- END DRAWINGS ------------  **/
 
     /**  -------------- POINTS --------------  **/
     public void getPathByDrawing(Long drawingId, Function<Path, Void> callback) {
-        new AsyncTaskImpl<Path>() {
-            @Override
-            protected Path doInBackground(Void... params) {
-                return getPathByDrawing(drawingId);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<Path>()
+                .task(v -> getPathByDrawing(drawingId))
+                .callback(callback)
+                .execute();
     }
     public void insertPath(Path path, Function<List<Long>, Void> callback) {
-        new AsyncTaskImpl<List<Long>>() {
-            @Override
-            protected List<Long> doInBackground(Void... params) {
-                return insertPath(path);
-            }
-        }.callback(callback).execute();
+        new AsyncTaskImpl<List<Long>>()
+                .task(v -> insertPath(path))
+                .callback(callback)
+                .execute();
     }
     /**  ------------ END POINTS ------------  **/
 
     /**  ------------- CONFIGS --------------  **/
-    public void getUserConfig(String name, Function<String, Void> callback) {
-        new AsyncTaskImpl<String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                return getUserConfig(name);
-            }
-        }.callback(callback).execute();
+    public void getUserConfig(ConfigConstant configName, Function<String, Void> callback) {
+        new AsyncTaskImpl<String>()
+                .task(v -> getUserConfig(configName))
+                .callback(callback)
+                .execute();
     }
-    public void setUserConfig(String name, String value, Function<Void, Void> callback) {
-        new AsyncTaskImpl<Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                setUserConfig(name, value);
-                return null;
-            }
-        }.callback(callback).execute();
+    public void setUserConfig(ConfigConstant configName, String configValue, Function<Void, Void> callback) {
+        new AsyncTaskImpl<Void>()
+                .task(v -> {
+                    setUserConfig(configName, configValue);
+                    return null;
+                })
+                .callback(callback)
+                .execute();
     }
     /**  ----------- END CONFIGS ------------  **/
 
 
-    private abstract class AsyncTaskImpl<R> extends AsyncTask<Void, Void, R> {
+    private class AsyncTaskImpl<R> extends AsyncTask<Void, Void, R> {
+        private Function<Void, R> _task;
         private Function<R, Void> _callback;
-        public AsyncTaskImpl<R> callback(Function<R, Void> callback) {
-            this._callback = callback;
+        AsyncTaskImpl<R> callback(Function<R, Void> callbackFunction) {
+            _callback = callbackFunction;
             return this;
+        }
+        AsyncTaskImpl<R> task(Function<Void, R> taskFunction) {
+            _task = taskFunction;
+            return this;
+        }
+        @Override
+        protected R doInBackground(Void... params) {
+            return _task.apply(null);
         }
         @Override
         protected void onPostExecute(R result) {

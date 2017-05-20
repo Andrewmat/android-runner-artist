@@ -1,6 +1,5 @@
 package com.example.andre.runnerartist.mapper;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.util.List;
@@ -8,5 +7,4 @@ import java.util.List;
 interface Mapper<T> {
     T map(Cursor c);
     List<T> mapList(Cursor c);
-    ContentValues toContentValues(T t, Boolean withId);
 }

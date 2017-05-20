@@ -1,6 +1,8 @@
 package com.example.andre.runnerartist.model;
 
-public class Profile {
+import android.content.ContentValues;
+
+public class Profile implements ContentValueAble{
     private Long id;
     private String name;
 
@@ -23,5 +25,12 @@ public class Profile {
     public Profile withName(String name) {
         setName(name);
         return this;
+    }
+
+    @Override
+    public ContentValues asContentValues() {
+        ContentValues cval = new ContentValues();
+        cval.put("name", getName());
+        return cval;
     }
 }
