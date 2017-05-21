@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.andre.runnerartist.R;
@@ -18,6 +19,7 @@ import com.example.andre.runnerartist.misc.RequestMapsPermissionActivity;
 import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.GeoPoint;
 import com.example.andre.runnerartist.model.Path;
+import com.example.andre.runnerartist.model.Profile;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +34,7 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
 
     private Button btnPinpoint;
     private Button btnSaveLocation;
+    private LinearLayout cntMapsButtons;
 
     private GoogleMap mMap;
     private Location location;
@@ -59,30 +62,32 @@ public class MapsActivity extends RequestMapsPermissionActivity implements OnMap
         mapFragment.getMapAsync(this);
         btnPinpoint = (Button) findViewById(R.id.btnPinpoint);
         btnSaveLocation = (Button) findViewById(R.id.btnSaveLocation);
+        cntMapsButtons = (LinearLayout) findViewById(R.id.cntMapsButtons);
 
         btnPinpoint.setOnClickListener(v -> saveLocation());
         btnSaveLocation.setOnClickListener(v -> {
-            db().insertDrawing(drawing.withFinishCreationTime(System.currentTimeMillis()));
+            Intent intent = new Intent(this, InsertDrawingActivity.class);
+            intent.putExtra("drawing", drawing.withFinishCreationTime(System.currentTimeMillis()));
+            startActivity(intent);
             finish();
         });
         Intent in = getIntent();
-        if (in.getLongExtra("drawingId", -1) != -1L) {
-            drawing = db().getDrawingById(in.getLongExtra("drawingId", -1));
+        if (in.getSerializableExtra("drawing") != null) {
+            drawing = (Drawing) in.getSerializableExtra("drawing");
             isShowing = true;
-            btnPinpoint.setVisibility(View.INVISIBLE);
-            btnSaveLocation.setVisibility(View.INVISIBLE);
+            cntMapsButtons.setVisibility(View.GONE);
         } else {
             isShowing = false;
             autoSave = in.getBooleanExtra("autosave", true);
-            Long profileId = in.getLongExtra("profileId", 0);
-            db().getProfileById(profileId, p -> {
-                drawing = new Drawing()
+            Profile profile = (Profile) in.getSerializableExtra("profile");
+            drawing = new Drawing()
                     .withPath(new Path())
-                    .withProfile(p)
+                    .withProfile(profile)
                     .withCycle(false)
                     .withStartCreationTime(System.currentTimeMillis());
-                return null;
-            });
+            if (autoSave) {
+                btnPinpoint.setVisibility(View.GONE);
+            }
         }
     }
 

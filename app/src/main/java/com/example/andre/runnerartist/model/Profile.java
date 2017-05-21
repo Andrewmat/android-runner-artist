@@ -2,7 +2,11 @@ package com.example.andre.runnerartist.model;
 
 import android.content.ContentValues;
 
-public class Profile implements ContentValueAble{
+import java.io.Serializable;
+
+public class Profile implements ContentValueAble, Serializable {
+
+    private static final long serialVersionUID = 448655919120546380L;
     private Long id;
     private String name;
 

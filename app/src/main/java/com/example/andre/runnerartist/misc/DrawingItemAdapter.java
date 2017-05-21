@@ -52,7 +52,7 @@ public class DrawingItemAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(ctx).inflate(R.layout.item_drawing, null);
             vh = new ViewHolder();
             vh.txvItemDrawingMain = (TextView) convertView.findViewById(R.id.txvItemDrawingMain);
-            vh.txvDistanceDuration = (TextView) convertView.findViewById(R.id.txvDistanceDuration);
+            vh.txvDrawingComplement = (TextView) convertView.findViewById(R.id.txvDrawingComplement);
             convertView.setTag(vh);
         } else {
             vh = (ViewHolder) convertView.getTag();
@@ -63,28 +63,33 @@ public class DrawingItemAdapter extends BaseAdapter {
         Long delta = System.currentTimeMillis() - drawing.getFinishCreationTime();
         if (delta < MAX_DELTA_TIME) {
             if (delta < MIN) {
-                creationTimeMessage = "Menos de 1m atrás";
+                creationTimeMessage = "< 1m";
             } else if (delta < HOUR) {
-                creationTimeMessage = delta / MIN + " minutos atrás";
+                creationTimeMessage = delta / MIN + "m";
             } else if (delta < DAY) {
-                creationTimeMessage = delta / HOUR + " horas atrás";
+                creationTimeMessage = delta / HOUR + "h";
             } else {
-                creationTimeMessage = delta / DAY + " dias atrás";
+                creationTimeMessage = delta / DAY + "d";
             }
         } else {
             creationTimeMessage = DateFormat.getDateInstance().format(new Date(drawing.getFinishCreationTime()));
         }
-        vh.txvItemDrawingMain.setText(creationTimeMessage);
 
-        // Message of distance and duration of travel
-        Long duration = (drawing.getFinishCreationTime() - drawing.getStartCreationTime()) / 60000;
-        vh.txvDistanceDuration.setText(new DecimalFormat("#.##").format(drawing.getPath().distance()) + "km - " + duration + "min");
+        String durationMessage = (drawing.getFinishCreationTime() - drawing.getStartCreationTime()) / 60000 + "min";
+        String distanceMessage = new DecimalFormat("#.##").format(drawing.getPath().distance());
 
+        if (drawing.getDescription() != null && !drawing.getDescription().isEmpty()) {
+            vh.txvItemDrawingMain.setText(drawing.getDescription());
+            vh.txvDrawingComplement.setText(creationTimeMessage + " - " + durationMessage + " - " + distanceMessage);
+        } else {
+            vh.txvItemDrawingMain.setText("À " + creationTimeMessage);
+            vh.txvDrawingComplement.setText(durationMessage + " - " + distanceMessage);
+        }
         return convertView;
     }
 
     private static class ViewHolder {
         TextView txvItemDrawingMain;
-        TextView txvDistanceDuration;
+        TextView txvDrawingComplement;
     }
 }

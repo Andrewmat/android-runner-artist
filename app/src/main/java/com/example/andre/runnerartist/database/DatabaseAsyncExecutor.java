@@ -50,6 +50,15 @@ public class DatabaseAsyncExecutor extends DatabaseExecutor {
                 .callback(callback)
                 .execute();
     }
+    public void deleteDrawing(Long id, Function<Void, Void> callback) {
+        new AsyncTaskImpl<Void>()
+                .task(v -> {
+                    deleteDrawing(id);
+                    return null;
+                })
+                .callback(callback)
+                .execute();
+    }
     public void insertDrawing(Drawing drawing, Function<Drawing, Void> callback) {
         new AsyncTaskImpl<Drawing>()
                 .task(v -> insertDrawing(drawing))

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.Switch;
 import com.example.andre.runnerartist.R;
 import com.example.andre.runnerartist.misc.ConfigConstant;
 import com.example.andre.runnerartist.misc.DrawingItemAdapter;
+import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.Profile;
 
 import java.util.List;
@@ -50,7 +52,7 @@ public class MainActivity extends GenericActivity {
         fabBeginDraw.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, MapsActivity.class);
             intent.putExtra("autosave", swtContinuo.isChecked());
-            intent.putExtra("profileId", selectedProfile.getId());
+            intent.putExtra("profile", selectedProfile);
             startActivity(intent);
         });
 
@@ -59,8 +61,21 @@ public class MainActivity extends GenericActivity {
 
             lstDrawings.setOnItemClickListener((parent, view, position, id) -> {
                 Intent intent = new Intent(ctx, MapsActivity.class);
-                intent.putExtra("drawingId", id);
+                intent.putExtra("drawing", (Drawing) parent.getItemAtPosition(position));
                 startActivity(intent);
+            });
+
+            lstDrawings.setOnItemLongClickListener((parent, view, position, id) -> {
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle("Opções");
+                alert.setItems(new String[] { "Remover" }, (dialog, which) -> {
+                    db().deleteDrawing(id, input -> {
+                        updateDrawings();
+                        return null;
+                    });
+                });
+                alert.show();
+                return true;
             });
 
             btnListProfile.setOnClickListener(v -> {
@@ -131,6 +146,9 @@ public class MainActivity extends GenericActivity {
         super.onResume();
         db().getProfiles(result -> {
             profiles = result;
+            if (selectedProfile != null) {
+                updateProfile(selectedProfile);
+            }
             return null;
         });
     }
@@ -139,8 +157,13 @@ public class MainActivity extends GenericActivity {
         // update name text
         selectedProfile = p;
         btnListProfile.setText(p.getName());
-        db().setUserConfig(ConfigConstant.DEFAULT_PROFILE_ID, p.getId().toString(), a -> null);
+        db().setUserConfig(ConfigConstant.DEFAULT_PROFILE_ID, p.getId().toString(), a -> {
+            updateDrawings();
+            return null;
+        });
+    }
 
+    private void updateDrawings() {
         // update drawings from profile
         db().getDrawingsFromProfile(selectedProfile.getId(), drawings -> {
             ListAdapter adapter = new DrawingItemAdapter(this, drawings);

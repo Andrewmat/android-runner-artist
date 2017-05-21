@@ -2,7 +2,11 @@ package com.example.andre.runnerartist.model;
 
 import android.content.ContentValues;
 
-public class Drawing implements Cloneable, ContentValueAble {
+import java.io.Serializable;
+
+public class Drawing implements ContentValueAble, Serializable {
+
+    private static final long serialVersionUID = 1894757065349691269L;
     private Long id;
     private Path path;
     private Profile profile;

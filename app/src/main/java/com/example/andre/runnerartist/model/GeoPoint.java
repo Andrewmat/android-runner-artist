@@ -3,7 +3,11 @@ package com.example.andre.runnerartist.model;
 import android.content.ContentValues;
 import android.location.Location;
 
-public class GeoPoint implements ContentValueAble {
+import java.io.Serializable;
+
+public class GeoPoint implements ContentValueAble, Serializable {
+
+    private static final long serialVersionUID = 161822477814879819L;
     private Long id;
     private Double lat, lng;
     private Long drawingId;

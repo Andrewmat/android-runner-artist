@@ -1,10 +1,13 @@
 package com.example.andre.runnerartist.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Path {
-    List<GeoPoint> points;
+public class Path implements Serializable {
+
+    private static final long serialVersionUID = -7906411771852904223L;
+    private List<GeoPoint> points;
 
     public Path() {
         initPath();

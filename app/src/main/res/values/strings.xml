@@ -1,26 +1,4 @@
 <resources>
     <string name="app_name">RunnerArtist</string>
-    <string name="title_activity_maps">Map</string>
-    <string-array name="drawing_dates">
-        <item>29/03/2017</item>
-        <item>25/03/2017</item>
-        <item>22/03/2017</item>
-        <item>15/03/2017</item>
-        <item>10/03/2017</item>
-        <item>08/03/2017</item>
-        <item>01/03/2017</item>
-        <item>19/02/2017</item>
-        <item>15/02/2017</item>
-        <item>04/02/2017</item>
-        <item>29/01/2017</item>
-        <item>15/01/2017</item>
-        <item>09/01/2017</item>
-        <item>03/01/2017</item>
-    </string-array>
-    <string-array name="profiles">
-        <item>Giovani</item>
-        <item>Erica</item>
-        <item>Humberto</item>
-        <item>Luiza</item>
-    </string-array>
+    <string name="title_activity_maps">Desenho</string>
 </resources>

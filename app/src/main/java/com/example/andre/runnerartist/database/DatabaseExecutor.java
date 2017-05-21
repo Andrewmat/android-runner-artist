@@ -86,6 +86,9 @@ public class DatabaseExecutor {
         insertPath(drawing.getPath());
         return drawing;
     }
+    public Integer deleteDrawing(Long id) {
+        return writableDb.delete("t_drawing", "_id = ?", new String[] { id.toString() });
+    }
     private Cursor getCursorDrawing(String selection, String[] selectionArgs) {
         return readableDb.query("t_drawing", new String[] {
                 "_id",
