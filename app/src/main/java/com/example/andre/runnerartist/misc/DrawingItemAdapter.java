@@ -53,6 +53,7 @@ public class DrawingItemAdapter extends BaseAdapter {
             vh = new ViewHolder();
             vh.txvItemDrawingMain = (TextView) convertView.findViewById(R.id.txvItemDrawingMain);
             vh.txvDrawingComplement = (TextView) convertView.findViewById(R.id.txvDrawingComplement);
+            vh.canvasDrawing = (CanvasDrawingView) convertView.findViewById(R.id.canvasDrawing);
             convertView.setTag(vh);
         } else {
             vh = (ViewHolder) convertView.getTag();
@@ -76,7 +77,7 @@ public class DrawingItemAdapter extends BaseAdapter {
         }
 
         String durationMessage = (drawing.getFinishCreationTime() - drawing.getStartCreationTime()) / 60000 + "min";
-        String distanceMessage = new DecimalFormat("#.##").format(drawing.getPath().distance());
+        String distanceMessage = new DecimalFormat("#.##").format(drawing.getDrawingPath().distance()) + "km";
 
         if (drawing.getDescription() != null && !drawing.getDescription().isEmpty()) {
             vh.txvItemDrawingMain.setText(drawing.getDescription());
@@ -85,11 +86,15 @@ public class DrawingItemAdapter extends BaseAdapter {
             vh.txvItemDrawingMain.setText("À " + creationTimeMessage);
             vh.txvDrawingComplement.setText(durationMessage + " - " + distanceMessage);
         }
+
+        vh.canvasDrawing.withDrawing(drawing).invalidate();
+
         return convertView;
     }
 
     private static class ViewHolder {
         TextView txvItemDrawingMain;
         TextView txvDrawingComplement;
+        CanvasDrawingView canvasDrawing;
     }
 }

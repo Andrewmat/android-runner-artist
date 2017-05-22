@@ -9,9 +9,6 @@ public class DrawingMapper extends GenericMapper<Drawing> {
     public DrawingMapper(Context ctx) {
         super(ctx);
     }
-    public DrawingMapper() {
-        super();
-    }
     @Override
     public Drawing map(Cursor c) {
         try {

@@ -8,21 +8,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.andre.runnerartist.R;
-import com.example.andre.runnerartist.database.DatabaseAsyncExecutor;
-import com.example.andre.runnerartist.misc.RequestMapsPermissionActivity;
 import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.GeoPoint;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 
-public class InsertDrawingActivity extends RequestMapsPermissionActivity implements OnMapReadyCallback {
+public class InsertDrawingActivity extends GenericMapActivity implements OnMapReadyCallback {
 
     private TextView txvInsertDrawingDistance;
     private EditText edtDescriptionInsertDrawing;
@@ -31,14 +26,6 @@ public class InsertDrawingActivity extends RequestMapsPermissionActivity impleme
     private GoogleMap mMap;
 
     private Drawing drawing;
-
-    private DatabaseAsyncExecutor dbExecutor;
-    private DatabaseAsyncExecutor db() {
-        if (dbExecutor == null) {
-            dbExecutor = new DatabaseAsyncExecutor(this);
-        }
-        return dbExecutor;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +42,7 @@ public class InsertDrawingActivity extends RequestMapsPermissionActivity impleme
         Intent in = getIntent();
         drawing = (Drawing) in.getSerializableExtra("drawing");
 
-        txvInsertDrawingDistance.setText(new DecimalFormat("#.##").format(drawing.getPath().distance()) + "km");
+        txvInsertDrawingDistance.setText(new DecimalFormat("#.##").format(drawing.getDrawingPath().distance()) + "km");
 
         btnInsertDrawing.setOnClickListener(v -> {
             db().insertDrawing(drawing
@@ -71,14 +58,10 @@ public class InsertDrawingActivity extends RequestMapsPermissionActivity impleme
         PolylineOptions polylineOptions = new PolylineOptions()
                 .width(8)
                 .color(Color.GREEN);
-        for (GeoPoint p : drawing.getPath().getPoints()) {
-            polylineOptions.add(new LatLng(p.getLat(), p.getLng()));
+        centerOnPath(drawing.getDrawingPath(), mMap);
+        for (GeoPoint p : drawing.getDrawingPath().getPoints()) {
+            polylineOptions.add(p.asLatLng());
         }
-        GeoPoint pos = drawing.getPath().getPoints().get(0);
         mMap.addPolyline(polylineOptions);
-        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                .target(new LatLng(pos.getLat(), pos.getLng()))
-                .zoom(20)
-                .build()));
     }
 }

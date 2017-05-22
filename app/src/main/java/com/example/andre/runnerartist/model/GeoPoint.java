@@ -3,9 +3,11 @@ package com.example.andre.runnerartist.model;
 import android.content.ContentValues;
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 
-public class GeoPoint implements ContentValueAble, Serializable {
+public class GeoPoint implements ContentValueAble, Serializable, Cloneable {
 
     private static final long serialVersionUID = 161822477814879819L;
     private Long id;
@@ -67,12 +69,23 @@ public class GeoPoint implements ContentValueAble, Serializable {
         return this;
     }
     public GeoPoint withLng(Double lng) {
-        setLat(lng);
+        setLng(lng);
         return this;
     }
     public GeoPoint withDrawingId(Long drawingId) {
         setDrawingId(drawingId);
         return this;
+    }
+
+    public LatLng asLatLng() {
+        return new LatLng(getLat(), getLng());
+    }
+
+    @Override
+    public GeoPoint clone() {
+        return new GeoPoint(getLat(), getLng())
+                .withId(getId())
+                .withDrawingId(getDrawingId());
     }
 
     @Override

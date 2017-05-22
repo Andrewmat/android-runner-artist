@@ -7,7 +7,7 @@ import android.widget.EditText;
 
 import com.example.andre.runnerartist.R;
 
-public class InsertProfileActivity extends GenericActivity {
+public class InsertProfileActivity extends GenericAppCompatActivity {
 
     private EditText edvInsertName;
     private Button btnInsertProfile;

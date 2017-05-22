@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.example.andre.runnerartist.misc.ConfigConstant;
 import com.example.andre.runnerartist.model.Drawing;
-import com.example.andre.runnerartist.model.Path;
+import com.example.andre.runnerartist.model.DrawingPath;
 import com.example.andre.runnerartist.model.Profile;
 
 import java.util.List;
@@ -68,15 +68,15 @@ public class DatabaseAsyncExecutor extends DatabaseExecutor {
     /**  ----------- END DRAWINGS ------------  **/
 
     /**  -------------- POINTS --------------  **/
-    public void getPathByDrawing(Long drawingId, Function<Path, Void> callback) {
-        new AsyncTaskImpl<Path>()
+    public void getPathByDrawing(Long drawingId, Function<DrawingPath, Void> callback) {
+        new AsyncTaskImpl<DrawingPath>()
                 .task(v -> getPathByDrawing(drawingId))
                 .callback(callback)
                 .execute();
     }
-    public void insertPath(Path path, Function<List<Long>, Void> callback) {
+    public void insertPath(DrawingPath drawingPath, Function<List<Long>, Void> callback) {
         new AsyncTaskImpl<List<Long>>()
-                .task(v -> insertPath(path))
+                .task(v -> insertPath(drawingPath))
                 .callback(callback)
                 .execute();
     }

@@ -21,7 +21,7 @@ import com.example.andre.runnerartist.model.Profile;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends GenericActivity {
+public class MainActivity extends GenericAppCompatActivity {
     private final Context ctx = this;
     private ListView lstDrawings;
     private Switch swtContinuo;
@@ -83,7 +83,7 @@ public class MainActivity extends GenericActivity {
                 for (Profile p : profiles) {
                     pp.getMenu().add(Menu.NONE, p.getId().intValue(), Menu.NONE, p.getName());
                 }
-                pp.getMenu().add(Menu.NONE, -1, Menu.NONE, "Adicionar");
+                pp.getMenu().add(Menu.NONE, -1, Menu.NONE, "Adicionar...");
                 pp.setOnMenuItemClickListener(item -> {
                     Boolean found = false;
                     for (Profile p : profiles) {

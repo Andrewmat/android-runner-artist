@@ -11,7 +11,7 @@ import com.example.andre.runnerartist.mapper.ProfileMapper;
 import com.example.andre.runnerartist.misc.ConfigConstant;
 import com.example.andre.runnerartist.model.Drawing;
 import com.example.andre.runnerartist.model.GeoPoint;
-import com.example.andre.runnerartist.model.Path;
+import com.example.andre.runnerartist.model.DrawingPath;
 import com.example.andre.runnerartist.model.Profile;
 
 import java.util.ArrayList;
@@ -80,10 +80,10 @@ public class DatabaseExecutor {
     }
     public Drawing insertDrawing(Drawing drawing) {
         Long id = writableDb.insert("t_drawing", null, drawing.asContentValues());
-        for (GeoPoint p : drawing.getPath().getPoints()) {
+        for (GeoPoint p : drawing.getDrawingPath().getPoints()) {
             p.setDrawingId(id);
         }
-        insertPath(drawing.getPath());
+        insertPath(drawing.getDrawingPath());
         return drawing;
     }
     public Integer deleteDrawing(Long id) {
@@ -102,15 +102,15 @@ public class DatabaseExecutor {
     /**  ----------- END DRAWINGS ----------- **/
 
     /**  -------------- POINTS -------------- **/
-    public Path getPathByDrawing(Long drawingId) {
+    public DrawingPath getPathByDrawing(Long drawingId) {
         Cursor c = getCursorGeoPointFromDrawing(drawingId);
-        Path ret = new PathMapper(ctx).map(c);
+        DrawingPath ret = new PathMapper(ctx).map(c);
         c.close();
         return ret;
     }
-    public List<Long> insertPath(Path path) {
-        List<Long> ids = new ArrayList<>(path.getPoints().size());
-        ListIterator<GeoPoint> it = path.getPoints().listIterator();
+    public List<Long> insertPath(DrawingPath drawingPath) {
+        List<Long> ids = new ArrayList<>(drawingPath.getPoints().size());
+        ListIterator<GeoPoint> it = drawingPath.getPoints().listIterator();
         while (it.hasNext()) {
             Integer index = it.nextIndex();
             GeoPoint geoPoint = it.next();

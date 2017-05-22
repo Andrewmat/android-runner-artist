@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.andre.runnerartist.database.DatabaseAsyncExecutor;
 
-public abstract class GenericActivity extends AppCompatActivity {
+public abstract class GenericAppCompatActivity extends AppCompatActivity {
     private DatabaseAsyncExecutor dbExecutor;
     protected DatabaseAsyncExecutor db() {
         if (dbExecutor == null) {

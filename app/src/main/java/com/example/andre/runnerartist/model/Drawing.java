@@ -8,7 +8,7 @@ public class Drawing implements ContentValueAble, Serializable {
 
     private static final long serialVersionUID = 1894757065349691269L;
     private Long id;
-    private Path path;
+    private DrawingPath drawingPath;
     private Profile profile;
     private Long startCreationTime;
     private Long finishCreationTime;
@@ -18,8 +18,8 @@ public class Drawing implements ContentValueAble, Serializable {
     public Long getId() {
         return id;
     }
-    public Path getPath() {
-        return path;
+    public DrawingPath getDrawingPath() {
+        return drawingPath;
     }
     public Profile getProfile() {
         return profile;
@@ -39,8 +39,8 @@ public class Drawing implements ContentValueAble, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    public void setPath(Path path) {
-        this.path = path;
+    public void setDrawingPath(DrawingPath drawingPath) {
+        this.drawingPath = drawingPath;
     }
     public void setProfile(Profile profile) {
         this.profile = profile;
@@ -61,8 +61,8 @@ public class Drawing implements ContentValueAble, Serializable {
         setId(id);
         return this;
     }
-    public Drawing withPath(Path path) {
-        setPath(path);
+    public Drawing withPath(DrawingPath drawingPath) {
+        setDrawingPath(drawingPath);
         return this;
     }
     public Drawing withProfile(Profile profile) {
