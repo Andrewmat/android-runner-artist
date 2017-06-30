@@ -13,6 +13,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public abstract class GenericMapActivity extends FragmentActivity {
@@ -51,15 +54,27 @@ public abstract class GenericMapActivity extends FragmentActivity {
         }
     }
 
-    public Boolean checkLocationPermissionGranted() {
-        return true;
+    protected void centerOnPath(DrawingPath drawingPath, GoogleMap map) {
+        if (drawingPath.getPoints().size() >= 2) {
+            LatLngBounds.Builder builder = LatLngBounds.builder();
+            for (GeoPoint p : drawingPath.getPoints()) {
+                builder.include(p.asLatLng());
+            }
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 30));
+        } else if (!drawingPath.getPoints().isEmpty()) {
+            map.moveCamera(CameraUpdateFactory.newLatLng(drawingPath.getPoints().get(0).asLatLng()));
+        }
     }
 
-    protected void centerOnPath(DrawingPath drawingPath, GoogleMap map) {
-        LatLngBounds.Builder builder = LatLngBounds.builder();
-        for (GeoPoint p : drawingPath.getPoints()) {
-            builder.include(p.asLatLng());
+    protected static List<GeoPoint> bezierCurve(GeoPoint p1, GeoPoint p2, GeoPoint p3) {
+        final Integer MAX = 10;
+        List<GeoPoint> curve = new ArrayList<>();
+        for (Integer i = 0; i < MAX; i++) {
+            Double ratio = i.doubleValue() / MAX;
+            GeoPoint pb1 = p1.pointBetween(p2, ratio);
+            GeoPoint pb2 = p2.pointBetween(p3, ratio);
+            curve.add(pb1.pointBetween(pb2, ratio));
         }
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 30));
+        return curve;
     }
 }

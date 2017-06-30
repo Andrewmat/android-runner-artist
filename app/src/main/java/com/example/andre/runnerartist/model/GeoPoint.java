@@ -36,6 +36,17 @@ public class GeoPoint implements ContentValueAble, Serializable, Cloneable {
         return distance(this, p);
     }
 
+    public static GeoPoint pointBetween(GeoPoint p1, GeoPoint p2, Double ratio) {
+        GeoPoint vector = new GeoPoint(p2.getLat() - p1.getLat(), p2.getLng() - p1.getLng());
+        return new GeoPoint(
+                p1.getLat() + (vector.getLat() * ratio),
+                p1.getLng() + (vector.getLng() * ratio)
+        );
+    }
+    public GeoPoint pointBetween(GeoPoint p, Double ratio) {
+        return pointBetween(this, p, ratio);
+    }
+
     public Long getId() {
         return id;
     }

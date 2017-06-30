@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.Objects;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MapsActivity extends GenericMapActivity implements OnMapReadyCallback {
@@ -61,13 +63,13 @@ public class MapsActivity extends GenericMapActivity implements OnMapReadyCallba
 
         btnPinpoint.setOnClickListener(v -> saveLocation());
         btnSaveLocation.setOnClickListener(v -> {
-            if (drawing.getDrawingPath().getPoints() != null && !drawing.getDrawingPath().getPoints().isEmpty()) {
+            if (drawing.getDrawingPath().getPoints() != null && drawing.getDrawingPath().getPoints().size() > 1) {
                 Intent intent = new Intent(this, InsertDrawingActivity.class);
                 intent.putExtra("drawing", drawing.withFinishCreationTime(System.currentTimeMillis()));
                 startActivity(intent);
                 finish();
             } else {
-                Toast.makeText(this, "Um ponto precisa ser alocado para salvar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Dois pontos precisam serem alocado para poder salvar um desenho", Toast.LENGTH_SHORT).show();
             }
         });
         Intent in = getIntent();
@@ -97,7 +99,7 @@ public class MapsActivity extends GenericMapActivity implements OnMapReadyCallba
                 .width(8)
                 .color(Color.BLUE);
         if (isShowing) {
-            for (GeoPoint p : drawing.getDrawingPath().getPoints()) {
+            for (GeoPoint p : drawing.getDrawingPath().curved().getPoints()) {
                 polylineOptions.add(new LatLng(p.getLat(), p.getLng()));
             }
             mMap.setOnMapLoadedCallback(() -> centerOnPath(drawing.getDrawingPath(), mMap));
@@ -186,12 +188,19 @@ public class MapsActivity extends GenericMapActivity implements OnMapReadyCallba
 
     private void saveLocation() {
         if (location != null) {
-            drawing.getDrawingPath().addPoint(new GeoPoint(location));
+            addPoint(new GeoPoint(location));
             polylineOptions.add(new LatLng(location.getLatitude(), location.getLongitude()));
             mMap.clear();
             mMap.addPolyline(polylineOptions);
         } else {
             Toast.makeText(this, "Desculpe, ainda não temos sua localização", Toast.LENGTH_LONG).show();
+        }
+    }
+    private void addPoint(GeoPoint newP) {
+        GeoPoint lastP = drawing.getDrawingPath().getPoints().get(drawing.getDrawingPath().getPoints().size() - 1);
+        if (!Objects.equals(newP.getLat(), lastP.getLat()) ||
+                !Objects.equals(newP.getLng(), lastP.getLng())) {
+            drawing.getDrawingPath().addPoint(newP);
         }
     }
 }

@@ -2,6 +2,8 @@ package com.example.andre.runnerartist.model;
 
 import android.graphics.Path;
 
+import com.example.andre.runnerartist.misc.Curve;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,23 @@ public class DrawingPath implements Serializable {
             absPoints.add(abs);
         }
         return absPoints;
+    }
+
+    public DrawingPath curved() {
+        DrawingPath curvedPath =  new DrawingPath();
+        curvedPath.addPoint(getPoints().get(0));
+        for (Integer i = 1; i < getPoints().size() - 2; i++) {
+            GeoPoint p1 = curvedPath.getPoints().get(curvedPath.getPoints().size() - 1);
+            GeoPoint p2 = getPoints().get(i);
+            GeoPoint p3 = getPoints().get(i + 1);
+            List<GeoPoint> curve = Curve.bezierCurve(p1, p2, p3);
+            curvedPath.getPoints().addAll(curve.subList(0, curve.size() / 2));
+        }
+        GeoPoint p1 = getPoints().get(getPoints().size() - 3);
+        GeoPoint p2 = getPoints().get(getPoints().size() - 2);
+        GeoPoint p3 = getPoints().get(getPoints().size() - 1);
+        curvedPath.getPoints().addAll(Curve.bezierCurve(p1, p2, p3));
+        return curvedPath;
     }
 
     public DrawingPath addPoint(GeoPoint p) {
